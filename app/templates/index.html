@@ -1,0 +1,471 @@
+{% extends "baseTemplate.html" %}
+{%  block styles %}
+div.ex1 {
+    width: 1200px;
+    margin: auto;
+  }
+.card { 
+    animation: fadeInAnimation ease 3s; 
+    animation-iteration-count: 1; 
+    animation-fill-mode: forwards; 
+} 
+@keyframes fadeInAnimation { 
+    0% { 
+        opacity: 0; 
+    } 
+    100% { 
+        opacity: 1; 
+    } 
+} 
+{% endblock %}
+{% block content %}
+<div align="center" class="w-50 mt-2 mx-auto">
+    <form method="post" enctype="multipart/form-data" novalidate>
+    {{basicSubmitform.hidden_tag()}}
+        <div class="form-row align-items-center">
+            <div class="col-auto my-1">
+                {{basicSubmitform.file(class="custom-file-input",id='file-upload')}}
+                <label class="custom-file-label" id="file-name" for="validatedCustomFile">Choose file...</label>
+            </div>
+            <div class="col-auto my-1">
+                {{basicSubmitform.analyze(class="btn btn-primary pull-right", id='analyze')}}
+            </div>
+        </div>
+    </form>
+</div>
+<br>
+{% if analyzed %}
+<div class="card-columns ex1" >
+    <div class="card bg-light p-3 text-center" >
+        <div class="card-body">
+            <h5 class="card-title">Summary</h5>
+            <p class="card-text">Summarize the General Ledger by Transaction Type.</p>
+            <button class="btn btn-primary" type="submit" data-toggle="modal" data-target=".summary-modal">View</button>
+        </div>
+    </div>
+    <div class="card bg-light p-3 text-center" >
+        <div class="card-body">
+            <h5 class="card-title">Scatter Plot</h5>
+            <p class="card-text">View the Scatter Plot.</p>
+            <button class="btn btn-primary" type="submit" data-toggle="modal" data-target=".scatterDataDebit-modal">Debit</button>
+            <button class="btn btn-primary" type="submit" data-toggle="modal" data-target=".scatterDataCredit-modal">Credit</button>
+        </div>
+    </div>
+    <div class="card bg-light text-center">
+        <div class="card-body">
+            <h5 class="card-title">Check Unbalanced Entries</h5>
+            <p class="card-text">Check Unbalanced entries by Transaction type.</p>
+            <form class="Unbalanced-journal" method="post" enctype="multipart/form-data" novalidate>
+                {{unbalancedEntriesForm.hidden_tag()}}
+                <div class="form-row align-items-center">
+                    <div class="col-auto my-1">
+                        {{unbalancedEntriesForm.transaction(class="custom-select mr-sm-2")}}
+                    </div>
+                    <div class="col-auto my-1">
+                        {{unbalancedEntriesForm.check(class="btn btn-primary",id="unbalancedModal")}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card bg-light text-center">
+        <div class="card-body">
+            <h5 class="card-title">Check Monthly Entries</h5>
+            <p class="card-text">Check entries by month.</p>
+            <form class='monthly-journal' method="post" enctype="multipart/form-data" novalidate>
+                {{monthlyEntriesForm.hidden_tag()}}
+                <div class="form-row align-items-center">
+                    <div class="col-auto my-1">
+                        {{monthlyEntriesForm.months(class="custom-select mr-sm-2")}}
+                    </div>
+                    <div class="col-auto my-1">
+                        {{monthlyEntriesForm.check(class="btn btn-primary")}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card bg-light text-center">
+        <div class="card-body">
+            <h5 class="card-title">Check High Dollar Entries</h5>
+            <p class="card-text">Check those entries which are higher than the amount typed.</p>
+            <form class='high-dollar-journal' method="post" enctype="multipart/form-data" novalidate>
+                {{highDollarEntriesForm.hidden_tag()}}
+                <div class="form-row align-items-center">
+                    <div class="col-auto my-1">
+                        <label class="sr-only" for="inlineFormInputName">Amount</label>
+                        {{highDollarEntriesForm.amount( class="form-control", placeholder="Amount...")}}
+                    </div>
+                    <div class="col-auto my-1">
+                        {{highDollarEntriesForm.check(class="btn btn-primary")}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card bg-light text-center">
+        <div class="card-body">
+            <h5 class="card-title">Check Weekend Entries</h5>
+            <p class="card-text">Check the journal entries made on weekend.</p>
+            <form class='weekend-journal' method="post" enctype="multipart/form-data" novalidate>
+                {{weekendEntriesForm.hidden_tag()}}
+                <div class="form-row align-items-center">
+                    <div class="col-auto my-1">
+                        {{weekendEntriesForm.weekend(class="custom-select mr-sm-2")}}
+                    </div>
+                    <div class="col-auto my-1">
+                        {{weekendEntriesForm.check(class="btn btn-primary")}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card bg-light text-center">
+        <div class="card-body">
+            <h5 class="card-title">Check Round Dollar Entries</h5>
+            <p class="card-text">Check the journal entries which are round dollars.</p>
+            <button type="submit" class="btn btn-primary" data-toggle="modal" data-target=".round_dollar-modal">Check</button>
+        </div>
+    </div>
+    <div class="card bg-light text-center">
+        <div class="card-body">
+            <h5 class="card-title">Obtain sample Journal Entries</h5>
+            <p class="card-text">Obtain the sample journal entries by putting the number of sample in the text box below.</p>
+            <form class='sample-journal' method="post" enctype="multipart/form-data" novalidate>
+                {{sampleJournalEntriesForm.hidden_tag()}}
+                <div class="form-row align-items-center">
+                    <div class="col-auto my-1">
+                        <label class="sr-only" for="inlineFormInputName">Number</label>
+                        {{sampleJournalEntriesForm.number(class="form-control", placeholder="Number...")}}
+                    </div>
+                    <div class="col-auto my-1">
+                        {{sampleJournalEntriesForm.obtain(class="btn btn-primary")}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade summary-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="summaryTableGoesHere">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade round_dollar-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="round_dollarTableGoesHere">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade monthly-journal-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="monthly_journalTableGoesHere">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade high-dollar-journal-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="high_dollar_journalTableGoesHere">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade weekend-journal-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="weekend_journalTableGoesHere">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade sample-journal-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="sample_journalTableGoesHere">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade unbalanced-journal-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="Unbalanced_journalTableGoesHere">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade scatterDataDebit-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="scatterDataDebitDiv">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade scatterDataCredit-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="scatterDataCreditDiv">
+            </div>
+        </div>
+    </div>
+</div>
+
+{{else}}
+<div>
+
+</div>
+{% endif %}
+{% endblock %}
+
+{% block script %}
+
+$("#file-upload").change(function(){
+    $("#file-name").text(this.files[0].name);
+  });
+
+var scatterData_credit = {{ scatterdata_credit|safe }};
+var scatterData_debit = {{ scatterdata_debit|safe }};
+var layout = {
+    title: {
+      text:`Credits' Scatter Plot for the Transactions`,
+      font: {
+        family: 'Courier New, monospace',
+        size: 24
+      },
+      xref: 'paper',
+      x: 0.05,
+    },
+    xaxis: {
+      title: {
+        text: '',
+        font: {
+          family: 'Courier New, monospace',
+          size: 18,
+          color: '#7f7f7f'
+        }
+      },
+    },
+    yaxis: {
+      title: {
+        text: 'Dollar($) Amount',
+        font: {
+          family: 'Courier New, monospace',
+          size: 18,
+          color: '#7f7f7f'
+        }
+      }
+    }
+  };
+  
+Plotly.newPlot('scatterDataCreditDiv', [scatterData_credit], layout);
+Plotly.newPlot('scatterDataDebitDiv', [scatterData_debit], layout);
+
+function json2table(json, id) {
+    if (json === undefined || json.length == 0) {
+        return '<p>There is no Data!</p>'
+    }
+    var cols = Object.keys(json[0]);
+    
+    var headerRow = '';
+    var bodyRows = '';
+    
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    cols.map(function(col) {
+      headerRow += '<th>' + capitalizeFirstLetter(col) + '</th>';
+    });
+  
+    json.map(function(row) {
+      bodyRows += '<tr>';
+  
+      cols.map(function(colName) {
+        bodyRows += '<td>' + row[colName] + '</td>';
+      })
+  
+      bodyRows += '</tr>';
+    });
+  
+    return '<table id="${id}" class="table"> <thead><tr>' + headerRow + '</tr></thead><tbody>' + bodyRows + '</tbody></table>';
+  };
+    
+    var summary = JSON.parse({{ summary|safe }});
+    document.getElementById('summaryTableGoesHere').innerHTML = json2table(summary, "summary_table");
+    $(document).ready( function () {
+        $('#summary_table').DataTable({
+            "searching": false,
+            "scrollY":        "200px",
+            "scrollCollapse": true,
+            "paging":         false
+        });
+    } );
+
+    var round_dollar = JSON.parse({{ round_dollar|safe }});
+    document.getElementById('round_dollarTableGoesHere').innerHTML = json2table(round_dollar, "round_dollar_table");
+    $(document).ready( function () {
+    $('#round_dollar_table').DataTable({
+        "searching": false,
+        "scrollY":        "200px",
+        "scrollCollapse": true,
+        "paging":         false
+        });
+    });
+
+    $(document).ready(function() {
+        $('.monthly-journal').submit(function (e) {
+        var url = "{{ url_for('check_by_month_json') }}"; // send the form data here.
+        $('.monthly-journal-modal').modal('show');
+        console.log($('.monthly-journal').serialize())
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: $('.monthly-journal').serialize(), // serializes the form's elements.
+            success: function (data) {
+                document.getElementById('monthly_journalTableGoesHere').innerHTML = json2table(JSON.parse(data),"monthly_journal_table");
+                $(document).ready( function () {
+                $('#monthly_journal_table').DataTable();
+                } );
+            }
+        })
+        e.preventDefault(); // block the traditional submission of the form.
+    });
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", "{{ monthlyEntriesForm.csrf_token._value() }}")
+            }
+        }
+    })
+});
+
+$(document).ready(function() {
+    $('.high-dollar-journal').submit(function (e) {
+    $('.high-dollar-journal-modal').modal('show')
+    var url = "{{ url_for('check_high_dollar_json') }}"; // send the form data here.
+    console.log($('.high-dollar-journal').serialize())
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: $('.high-dollar-journal').serialize(), // serializes the form's elements.
+        success: function (data) {
+            document.getElementById('high_dollar_journalTableGoesHere').innerHTML = json2table(JSON.parse(data),"high_dollar_journal_table");
+            $(document).ready( function () {
+            $('#high_dollar_journal_table').DataTable();
+            } );
+        }
+    })
+    e.preventDefault(); // block the traditional submission of the form.
+});
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", "{{ highDollarEntriesForm.csrf_token._value() }}")
+        }
+    }
+})
+});
+
+$(document).ready(function() {
+    $('.weekend-journal').submit(function (e) {
+    $('.weekend-journal-modal').modal('show');
+    var url = "{{ url_for('check_by_weekend_json') }}"; // send the form data here.
+    console.log($('.weekend-journal').serialize())
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: $('.weekend-journal').serialize(), // serializes the form's elements.
+        success: function (data) {
+            document.getElementById('weekend_journalTableGoesHere').innerHTML = json2table(JSON.parse(data),"weekend_journal_table");
+            $(document).ready( function () {
+            $('#weekend_journal_table').DataTable();
+            } );
+        }
+    })
+    e.preventDefault(); // block the traditional submission of the form.
+});
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", "{{ weekendEntriesForm.csrf_token._value() }}")
+        }
+    }
+})
+});
+
+$(document).ready(function() {
+    $('.sample-journal').submit(function (e) {
+    $('.sample-journal-modal').modal('show');
+    var url = "{{ url_for('check_sample_json') }}"; // send the form data here.
+    console.log($('.sample-journal').serialize())
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: $('.sample-journal').serialize(), // serializes the form's elements.
+        success: function (data) {
+            document.getElementById('sample_journalTableGoesHere').innerHTML = json2table(JSON.parse(data),"sample_journal_table");
+            $(document).ready( function () {
+            $('#monthly_journal_table').DataTable();
+            } );
+        }
+    })
+    e.preventDefault(); // block the traditional submission of the form.
+});
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", "{{ monthlyEntriesForm.csrf_token._value() }}")
+        }
+    }
+})
+});
+
+$(document).ready(function() {
+    $('.Unbalanced-journal').submit(function (e) {
+    $('.unbalanced-journal-modal').modal('show');
+    var url = "{{ url_for('check_unbalanced_entry_json') }}"; // send the form data here.
+    console.log($('.Unbalanced-journal').serialize())
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: $('.Unbalanced-journal').serialize(), // serializes the form's elements.
+        success: function (data) {
+            console.log(data);
+            document.getElementById('Unbalanced_journalTableGoesHere').innerHTML = json2table(JSON.parse(data),"Unbalanced_journal_table");
+            $(document).ready( function () {
+            $('#Unbalanced_journal_table').DataTable();
+            } );
+        }
+    })
+    e.preventDefault(); // block the traditional submission of the form.
+});
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", "{{ unbalancedEntriesForm.csrf_token._value() }}")
+        }
+    }
+})
+});
+
+
+
+
+{% endblock %}
