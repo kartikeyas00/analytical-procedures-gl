@@ -1,3 +1,4 @@
 __pycache__
 journal_entry_tests.py
 test.py
+flask_session
