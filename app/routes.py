@@ -84,6 +84,8 @@ def index():
     )
 
 
+# views below returns json for certain methods from analytical_procedures.py
+
 @app.route("/checkunbalancedentry", methods=["GET", "POST"])
 def check_unbalanced_entry_json():
     unbalancedEntriesForm=UnbalancedEntriesForm()
