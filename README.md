@@ -1,2 +1,2 @@
-# Analytical Procedures with Flask
+# Analytical Procedures with Flask (Micro web framework written in Python)
 
