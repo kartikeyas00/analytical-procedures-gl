@@ -4,7 +4,7 @@ This web app is built for my Final Thesis Project *Why Big Data Analytics should
 
 Following analytical procedures have been implemented:
 
-| Analytical Procedures  | Description |
+| Analytical Procedures &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Description |
 |----------------|-------------|
 |Check Unbalanced Journal Entries| It checks for all the Journal Entries which are unbalanced or in other words debits is not equal to credits|
 |Check Journal Entries On Weekend|It checks all the Journal entries for a specific weekend(selected by the user) as these can be suspicious because most of the entries are posted during the week days|
@@ -15,24 +15,30 @@ Following analytical procedures have been implemented:
 |View Scatter Plot of Debits or Credits|Viewing scatter plot gives you a Visual way to look at the Range of Debits or Credits. By range I meant the range of dollars that what is the highest amount and what is the lowest.|
 
 
-### Run the web app on your local machine
+## How to run the Web App?
 
-1 - Clone the repo to your local machine.
+* Install Python
+* Clone the [source repository](https://github.com/kartikeyas00/analytical_procedures_gl) from Github.
+* On the command line, enter:
+    ````
+    git clone https://github.com/kartikeyas00/analytical_procedures_gl.git
+    ````
+* Install the relevant libraries by doing the following:
+    ````
+    pip install -r requirements.txt
+    ````
+* Now go to app folder and run the app
+    ````
+    export FLASK_APP=app.py (Mac or Linux) or set FLASK_APP=app.py (Windows)
+    flask run
+    ````
 
-2 - Go to the repo in command line.
+## Contributions are welcome
 
-3- Do the following:
+* Fork the repo.
 
-    $ export FLASK_APP=app.py (Mac OS) or set FLASK_APP=app.py (Windows)
+* Clone it, create a branch and make changes.
 
-    $ flask run
-
-### Contributions are welcome
-
-1 - Fork the repo.
-
-2 - Clone it, create a branch and make changes.
-
-3 - Submit pull request.
+* Submit pull request.
 
 
