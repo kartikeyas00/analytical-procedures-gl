@@ -36,9 +36,7 @@ Following analytical procedures have been implemented:
 ## Contributions are welcome
 
 * Fork the repo.
-
 * Clone it, create a branch and make changes.
-
 * Submit pull request.
 
 
